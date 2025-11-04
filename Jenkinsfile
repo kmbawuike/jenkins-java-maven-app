@@ -17,4 +17,13 @@ pipeline {
       }
     }
   }
+  post {
+    always {
+      echo "Always running"
+    }
+    failure {
+      echo "Failed build"
+    }
+  }
+
 }
