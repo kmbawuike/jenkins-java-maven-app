@@ -1,26 +1,40 @@
 pipeline {
   agent any 
+  tools {
+    maven 'maven-3.9.11'
+  }
   stages {
-    stage ("build"){
+    // building stage
+    stage ("build jar"){
       steps {
-        echo 'building application'
-      }
-    }
-    stage("test"){
-      when {
-        expression {
-          env.BRANCH_NAME == "main"
+        script {
+          echo "building the application"
+          sh 'mvn package'
         }
       }
-      steps{
-        echo "testing application"
-      }
     }
-    stage ("deploy"){
+
+    // building stage
+    stage ("build"){
       steps {
-        echo "deploying application"
+        script {
+          echo "deploying the docker image"
+          withCredentials([usernamePassword(credentialsId: 'jenkins-docker-hub', passwordVariable: 'PASS', usernameVariable: 'USER')]){
+            sh 'docker build -t kelz107/nana-projects:3.0 .'
+            sh 'echo $PASS | docker login -u $USER --password-stdin'
+            sh 'docker push kelz107/nana-projects:3.0'
+          }
+        }
       }
     }
+
+    // deploying stage
+    stage ("deploy"){
+      steps{
+        echo "deploying"
+      }
+    }
+   
   }
   post {
     always {
