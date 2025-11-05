@@ -36,6 +36,11 @@ pipeline {
 
     // deploying stage
     stage ("deploy"){
+      when {
+        expression {
+          env.BRANCH_NAME == "main"
+        }
+      }
       steps{
         script {
           gv.deploy()
