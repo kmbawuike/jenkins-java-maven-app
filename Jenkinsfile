@@ -12,16 +12,21 @@ pipeline {
       }
     }
     // building stage
-    stage ("build jar"){
+    stage ("test"){
       steps {
         script {
-        gv.buildJar()
+        gv.test()
         }
       }
     }
 
     // building stage
     stage ("build"){
+      when {
+        expression {
+          env.BRANCH_NAME == "main"
+        }
+      }
       steps {
         script {
         gv.build()
@@ -37,15 +42,5 @@ pipeline {
         }
       }
     }
-   
   }
-  post {
-    always {
-      echo "Always running"
-    }
-    failure {
-      echo "Failed build"
-    }
-  }
-
 }
