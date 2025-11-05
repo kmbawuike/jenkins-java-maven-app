@@ -1,49 +1,64 @@
-#!/usr/bin/env groovy
-library identifier: 'jenkins-shared-library@master', retriever: modernSCM(
-        [$class: 'GitSCMSource',
-        remote: 'https://gitlab.com/twn-devops-bootcamp/latest/08-jenkins/jenkins-shared-library.git',
-        credentialsId: 'gitlab-credentials'])
-
-def gv
-
-pipeline {   
-    agent any
-    tools {
-        maven 'maven-3.9'
+pipeline {
+  agent any 
+  tools {
+    maven 'maven-3.9'
+  }
+  stages {
+    stage("init"){
+      steps {
+        script {
+          gv = load "script.groovy"
+        }
+      }
     }
-    stages {
-        stage("init") {
-            steps {
-                script {
-                    gv = load "script.groovy"
-                }
-            }
+    // building stage
+    stage ("test"){
+      steps {
+        script {
+        gv.test()
         }
-
-        stage("build jar") {
-            steps {
-                script {
-                    buildJar()
-                }
-            }
-        }
-
-        stage("build and push image") {
-            steps {
-                script {
-                    buildImage 'kelz107/nana-projects:jma-3.0'
-                    dockerLogin()
-                    dockerPush 'kelz107/nana-projects:jma-3.0'
-                }
-            }
-        }
-        
-        stage("deploy") {
-            steps {
-                script {
-                    gv.deploy()
-                }
-            }
-        }               
+      }
     }
+
+    // building
+    stage ("build java"){
+      when {
+        expression {
+          env.BRANCH_NAME == "main"
+        }
+      }
+      steps {
+        script {
+        gv.buildJavaApp()
+        }
+      }
+    }
+
+    stage ("build docker image"){
+      when {
+        expression {
+          env.BRANCH_NAME == "main"
+        }
+      }
+      steps {
+        script {
+        gv.buildDockerImage()
+        }
+      }
+    }
+
+    // deploying stage
+    stage ("deploy"){
+      when {
+        expression {
+          env.BRANCH_NAME == "main"
+        }
+      }
+      steps{
+        script {
+          gv.deploy()
+        }
+      }
+    }
+  }
 }
