@@ -47,7 +47,7 @@ pipeline {
       }
       steps {
         script {
-        buildDockerImage()
+        buildDockerImage "kelz107/nana-projects:3.3"
         }
       }
     }
