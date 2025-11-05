@@ -48,6 +48,8 @@ pipeline {
       steps {
         script {
         buildImage 'kelz107/nana-projects:4.0'
+        dockerLogin()
+         dockerPush 'kelz107/nana-projects:4.0'
         }
       }
     }
