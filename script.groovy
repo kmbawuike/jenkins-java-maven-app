@@ -1,5 +1,5 @@
 def test(){
-   echo "testing the application"
+   echo "testing ${env.BRANCH_NAME}"
   sh 'mvn test'
 }
 
