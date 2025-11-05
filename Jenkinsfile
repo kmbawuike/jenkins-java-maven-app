@@ -1,3 +1,8 @@
+#!/user/bin/env groovy
+
+@Library('jenkins-shared-library')
+def gv
+
 pipeline {
   agent any 
   tools {
@@ -29,7 +34,7 @@ pipeline {
       }
       steps {
         script {
-        gv.buildJavaApp()
+       buildJavaApp()
         }
       }
     }
@@ -42,7 +47,7 @@ pipeline {
       }
       steps {
         script {
-        gv.buildDockerImage()
+        buildDockerImage()
         }
       }
     }
