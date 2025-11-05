@@ -1,71 +1,49 @@
-#!/user/bin/env groovy
-@Library('jenkins-shared-library')
+#!/usr/bin/env groovy
+library identifier: 'jenkins-shared-library@master', retriever: modernSCM(
+        [$class: 'GitSCMSource',
+        remote: 'https://gitlab.com/twn-devops-bootcamp/latest/08-jenkins/jenkins-shared-library.git',
+        credentialsId: 'gitlab-credentials'])
+
 def gv
 
-pipeline {
-  agent any 
-  tools {
-    maven 'maven-3.9'
-  }
-  stages {
-    stage("init"){
-      steps {
-        script {
-          gv = load "script.groovy"
-        }
-      }
+pipeline {   
+    agent any
+    tools {
+        maven 'Maven'
     }
-    // building stage
-    stage ("test"){
-      steps {
-        script {
-        gv.test()
+    stages {
+        stage("init") {
+            steps {
+                script {
+                    gv = load "script.groovy"
+                }
+            }
         }
-      }
-    }
 
-    // building stage
-    stage ("build java app"){
-      when {
-        expression {
-          env.BRANCH_NAME == "main"
+        stage("build jar") {
+            steps {
+                script {
+                    buildJar()
+                }
+            }
         }
-      }
-      steps {
-        script {
-        buildJar()
-        }
-      }
-    }
 
-    // building stage
-    stage ("build docker image"){
-      when {
-        expression {
-          env.BRANCH_NAME == "main"
+        stage("build and push image") {
+            steps {
+                script {
+                    buildImage 'kelz107/nana-projects:jma-3.0'
+                    dockerLogin()
+                    dockerPush 'kelz107/nana-projects:jma-3.0'
+                }
+            }
         }
-      }
-      steps {
-        script {
-        buildImage 'kelz107/nana-projects:4.0'
-        dockerLogin()
-         dockerPush 'kelz107/nana-projects:4.0'
-        }
-      }
+        
+        stage("deploy") {
+            steps {
+                script {
+                    gv.deploy()
+                }
+            }
+        }               
     }
-
-    // deploying stage
-    stage ("deploy"){
-      when {
-        expression {
-          env.BRANCH_NAME == "main"
-        }
-      }
-      steps{
-        script {
-          gv.deploy()
-        }
-      }
-    }
-  }
 }
