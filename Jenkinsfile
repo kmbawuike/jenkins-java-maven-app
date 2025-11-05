@@ -1,3 +1,7 @@
+#!/user/bin/env groovy
+@Library('jenkins-shared-library')
+def gv
+
 pipeline {
   agent any 
   tools {
@@ -21,7 +25,7 @@ pipeline {
     }
 
     // building stage
-    stage ("build"){
+    stage ("build java app"){
       when {
         expression {
           env.BRANCH_NAME == "main"
@@ -29,7 +33,21 @@ pipeline {
       }
       steps {
         script {
-        gv.build()
+        buildJar()
+        }
+      }
+    }
+
+    // building stage
+    stage ("build docker image"){
+      when {
+        expression {
+          env.BRANCH_NAME == "main"
+        }
+      }
+      steps {
+        script {
+        buildImage 'kelz107/nana-projects:4.0'
         }
       }
     }
