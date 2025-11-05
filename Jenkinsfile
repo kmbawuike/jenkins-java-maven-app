@@ -47,7 +47,7 @@ pipeline {
       }
       steps {
         script {
-        buildImage()
+        buildImage 'kelz107/nana-projects:4.0'
         }
       }
     }
