@@ -1,11 +1,11 @@
 #!/user/bin/env groovy
-// @Library('jenkins-shared-library') // shared library defined globally in jenkins
+@Library('jenkins-shared-library') // shared library defined globally in jenkins
 
-library identifier: 'jenkins-shared-library@main', retriever: modernSCM(
-  [
-    $class: 'GitHubSCMSource', 
-    remote: 'https://github.com/kmbawuike/jenkins-shared-library.git',
-    credentialsId: 'kelz-github'])
+// library identifier: 'jenkins-shared-library@main', retriever: modernSCM(
+//   [
+//     $class: 'GitHubSCMSource', 
+//     remote: 'https://github.com/kmbawuike/jenkins-shared-library.git',
+//     credentialsId: 'kelz-github'])
 
 def gv
 
