@@ -12,7 +12,7 @@ pipeline {
       }
     }
     // building stage
-    stage ("test"){
+    stage ("test......"){
       steps {
         script {
         gv.test()
