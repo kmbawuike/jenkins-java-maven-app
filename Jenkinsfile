@@ -1,9 +1,9 @@
 #!/user/bin/env groovy
 // @Library('jenkins-shared-library') // shared library defined globally in jenkins
 
-library identifier: 'jenkins-shared-library@master', retriever: modernSCM(
+library identifier: 'jenkins-shared-library@main', retriever: modernSCM(
   [
-    $class: 'GithubSCMSource', 
+    $class: 'GitSCMSource', 
     remote: 'https://github.com/kmbawuike/jenkins-shared-library.git',
     credentialsId: 'kelz-github'])
 
