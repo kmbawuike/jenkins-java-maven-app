@@ -4,62 +4,64 @@
 def gv
 
 pipeline {
-  agent any 
+  agent any
   tools {
     maven 'maven-3.9'
   }
   stages {
-    stage("init"){
+    stage('init') {
       steps {
         script {
-          gv = load "script.groovy"
+          gv = load 'script.groovy'
         }
       }
     }
     // building stage
-    stage ("test"){
+    stage('test') {
       steps {
         script {
-        gv.test()
+          gv.test()
         }
       }
     }
 
     // building
-    stage ("build java"){
+    stage('build java') {
       when {
         expression {
-          env.BRANCH_NAME == "main"
+          env.BRANCH_NAME == 'main'
         }
       }
       steps {
         script {
-       buildJavaApp()
+          buildJavaApp()
         }
       }
     }
 
-    stage ("build docker image"){
+    stage('building and pushing docker image') {
       when {
         expression {
-          env.BRANCH_NAME == "main"
+          env.BRANCH_NAME == 'main'
         }
       }
       steps {
         script {
-        buildDockerImage "kelz107/nana-projects:3.3"
+          buildDockerImage 'kelz107/nana-projects:3.4'
+          dockerLogin()
+          dockerPush 'kelz107/nana-projects:3.4'
         }
       }
     }
 
     // deploying stage
-    stage ("deploy"){
+    stage('deploy') {
       when {
         expression {
-          env.BRANCH_NAME == "main"
+          env.BRANCH_NAME == 'main'
         }
       }
-      steps{
+      steps {
         script {
           gv.deploy()
         }
