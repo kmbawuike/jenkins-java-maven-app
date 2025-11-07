@@ -74,9 +74,11 @@ pipeline {
                         // sh 'git branch'
                         // sh 'git config --list'
                         sh 'echo Logging URL begin'
-                        sh "echo https://${USER}:${PASS}@github.com/kmbawuike/jenkins-java-maven-app.git" 
+                        // sh "echo https://${USER}:${PASS}@github.com/kmbawuike/jenkins-java-maven-app.git" 
+                        sh('echo https://${USER}:${PASS}@github.com/kmbawuike/jenkins-java-maven-app.git')
                         sh 'echo Logging URL end'
-                        sh "git remote set-url origin https://${USER}:${PASS}@github.com/kmbawuike/jenkins-java-maven-app.git"
+                        // sh "git remote set-url origin https://${USER}:${PASS}@github.com/kmbawuike/jenkins-java-maven-app.git"
+                        sh('git remote set-url origin https://${USER}:${PASS}@github.com/kmbawuike/jenkins-java-maven-app.git')
                         sh 'git add .'
                         sh 'git commit -m "ci: version bump"'
                         sh 'git push origin HEAD:feat/jenkins-jobs'
