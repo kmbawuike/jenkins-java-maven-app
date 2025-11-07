@@ -1,3 +1,5 @@
+import java.net.URLEncoder
+
 pipeline {
   agent any 
   tools {
@@ -67,19 +69,18 @@ pipeline {
   stage("Commit version update") {
       steps {
           script {
-              withCredentials([sshUserPrivateKey(credentialsId: 'jenkins-ssh', keyFileVariable: 'SSH_KEY', usernameVariable: 'jenkins@server')]) {
-                  sh '''
-                      git config --global user.email "kmbawuike@gmail.com"
-                      git config --global user.name "kmbawuike"
+           withCredentials([usernamePassword(credentialsId: 'kelz-github', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                def safePass = PASS.replace("@", "%40")
+                sh """
+                    git config --global user.email "kmbawuike@gmail.com"
+                    git config --global user.name "kmbawuike"
+                    git remote set-url origin https://${USER}:${safePass}@github.com/kmbawuike/jenkins-java-maven-app.git
+                    git add .
+                    git commit -m "ci: version bump" || echo "No changes"
+                    git push origin HEAD:feat/jenkins-jobs
+                """
+            }
 
-                      git remote set-url origin git@github.com:kmbawuike/jenkins-java-maven-app.git
-                      git status
-                      git branch
-                      git add .
-                      git commit -m "ci: version bump" || echo "No changes to commit"
-                      git push origin HEAD:feat/jenkins-jobs
-                  '''
-              }
           }
       }
   }
