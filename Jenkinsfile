@@ -64,27 +64,25 @@ pipeline {
       }
     }
 
-    stage("commit version update"){
-      steps{
-        script{
-          withCredentials([usernamePassword(credentialsId: 'kelz-github	', passwordVariable: 'PASS', usernameVariable: 'USER')]){
-                     sh 'git config --global user.email "kmbawuike@gmail.com"'
-                        sh 'git config --global user.name "kmbawuike"'
+  stage("Commit version update") {
+      steps {
+          script {
+              withCredentials([usernamePassword(credentialsId: 'kelz-github', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                  sh '''
+                      git config --global user.email "kmbawuike@gmail.com"
+                      git config --global user.name "kmbawuike"
 
-                        sh 'git status'
-                        sh 'git branch'
-                        sh 'git config --list'
-
-                        sh '''
-                          git remote set-url origin https://${USER}:${PASS}@github.com/kmbawuike/jenkins-java-maven-app.git
-                        '''
-                        sh 'git add .'
-                        sh 'git commit -m "ci: version bump"'
-                        sh 'git push origin HEAD:feat/jenkins-jobs'
-
+                      git remote set-url origin https://${USER}:${PASS}@github.com/kmbawuike/jenkins-java-maven-app.git
+                      git status
+                      git branch
+                      git add .
+                      git commit -m "ci: version bump" || echo "No changes to commit"
+                      git push origin HEAD:feat/jenkins-jobs
+                  '''
+              }
           }
-        }
       }
-    }
+  }
+
   }
 }
